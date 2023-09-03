@@ -1,7 +1,8 @@
 class HealthRoutes < Sinatra::Base
+  use AuthMiddleware
     
   get('/') do
-    if request.env['HTTP_AUTHORIZATION'].present?
+    if request.env['AUTHED'] == true
       status 200
       body 'App working OK'
     else
