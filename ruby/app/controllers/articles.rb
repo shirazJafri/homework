@@ -1,8 +1,8 @@
 class ArticleController
   def create_article(article)
-    article_exists = ! (Article.where(:title => article['title']).empty?)
+    article_not_exists = (Article.where(:title => article['title']).empty?)
 
-    return { ok: false, msg: 'Article with given title already exists' } if article_exists
+    return { ok: false, msg: 'Article with given title already exists' } unless article_not_exists
 
     new_article = Article.new(:title => article['title'], :content => article['content'], :created_at => Time.now)
     new_article.save
@@ -26,13 +26,11 @@ class ArticleController
   end
 
   def get_article(id)
-    article = Article.find(id)
+    article = Article.where(id: id).first
 
-    if article
-      { ok: true, data: article }
-    else
-      { ok: false, msg: 'Article not found' }
-    end
+    return { ok: false, msg: 'Article not found' } unless article
+
+    { ok: true, data: article }
   rescue StandardError
     { ok: false }
   end
